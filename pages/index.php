@@ -36,7 +36,7 @@ $total_halaman = ceil($jumlah_data / $batas);
 $halaman_2akhir = $total_halaman - 1;
 $adjacents = "2";
 
-$data_produk = mysqli_query($conn,"SELECT * FROM surat limit $halaman_awal, $batas");
+$data_produk = mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.username = pegawai.username limit $halaman_awal, $batas");
 				$nomor = $halaman_awal+1;
        ?> 
             <div class="row">

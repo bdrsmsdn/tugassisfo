@@ -1,4 +1,5 @@
-<?php require_once('./header.php') ?>
+<?php require_once('./header.php');
+  $db = dbConnect();?>
         <!-- Main Content -->
         <div class="main-content">
           <section class="section">
@@ -41,15 +42,32 @@
                     <div class="modal-footer justify-content-center">
         <input type="submit" value="Generate No Surat" name="TblTampil" class="btn btn-warning"></input>
         <?php 
-            if(isset($_POST['TblTampil'])){
-                $ddd = substr($_POST['date'],5,2);
-                $ddq = substr($_POST['date'],0,4);
-                $dq = getRomawi($ddd);
+          if(isset($_POST['TblTampil'])){
+            $jenis = $_POST['jenis'];
+            $ddd = substr($_POST['date'],5,2);
+            $ddq = substr($_POST['date'],0,4);
+            $date = $_POST['date'];
+            $dq = getRomawi($ddd);
+            $sql1 = "INSERT INTO surat(kode_surat) SELECT MAX(kode_surat)+1 FROM surat WHERE kode_jenis = '$jenis'";
+            $sql2 = "UPDATE surat SET tgl_buat = '$date', kode_jenis = '$jenis' WHERE kode_surat = (SELECT MAX(kode_surat) FROM surat WHERE kode_jenis IS NULL) AND kode_jenis IS NULL";
+            $sql3 = "SELECT kode_surat FROM surat WHERE kode_jenis = '$jenis' AND kode_surat = (SELECT MAX(kode_surat) FROM surat WHERE kode_jenis = '$jenis')";
+            $res1=$db->query($sql1);
+            $res2=$db->query($sql2);
+            $res3=$db->query($sql3);
+            if ($res1 && $res2) {
+              if($db->affected_rows>0){
+                while ($kode = $res3->fetch_assoc()) {
+                  ?>
+                  <script>
+                    prompt("Nomor Surat", "<?= $_POST['jenis']; ?>.<?= $kode['kode_surat']; ?>/<?= strtoupper($_POST['pn']); ?>/<?= $dq; ?>/<?= $ddq; ?>");
+                  </script>
+                <?php
+                }
+              } 
             }
+          }
          ?>
-        <script>
-            prompt("Nomor Surat", "<?= $_POST['jenis']; ?>.016/<?= strtoupper($_POST['pn']); ?>/GTY/1965/<?= $dq; ?>/<?= $ddq; ?>");
-        </script>
+        
         <button data-toggle="modal" data-id="modal" data-target="#tampil_modal" class="btn btn-warning" name="TblUpload" >Generate dan Upload</button>
       </div>
                    </form>
@@ -102,8 +120,12 @@
             //check size
             if($size < 10000000){
                 //INI SQL NYA BLM --------------------------------------------------------------------
-                $sql = "INSERT INTO surat VALUES('1',)";
-          
+                $sql1 = "INSERT INTO surat(kode_surat) SELECT MAX(kode_surat)+1 FROM surat WHERE kode_jenis = '$jenis'";
+                $sql2 = "UPDATE surat SET nama_surat = '$file', tgl_buat = '$da', dokumen = '', kode_jenis = '$jenis' WHERE kode_surat = (SELECT MAX(kode_surat) FROM surat WHERE kode_jenis IS NULL) AND kode_jenis IS NULL";
+                $sql3 = "SELECT kode_surat FROM surat WHERE kode_jenis = '$jenis' AND kode_surat = (SELECT MAX(kode_surat) FROM surat WHERE kode_jenis = '$jenis')";
+                $res1=$db->query($sql1);
+                $res2=$db->query($sql2);
+                $res3=$db->query($sql3);
                   $result = $db->query($sql);
                   if(!$result){
                     ?>
