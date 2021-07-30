@@ -1,4 +1,6 @@
-<?php require_once('./header.php') ?>
+<?php 
+require_once('./header.php') ;
+?>
         <!-- Main Content -->
         <div class="main-content">
           <section class="section">
@@ -11,7 +13,7 @@
                 Tambah</button>
               </div> -->
               <div class="mb-4 p-3">
-                <form method="POST" action="menu-cari.php" class="needs-validation">
+                <form method="POST" action="index-cari.php" class="needs-validation">
                   <div class="input-group">
                     <input type="text" class="form-control" name="cari" placeholder="Search" required="">
                     <div class="input-group-btn">
@@ -30,19 +32,18 @@ $halaman_awal = ($halaman>1) ? ($halaman * $batas) - $batas : 0;
   $previous = $halaman - 1;
   $next = $halaman + 1;
   
-	$data=mysqli_query($conn,"SELECT * FROM surat");
+	$data=mysqli_query($conn,"SELECT * FROM surat WHERE kode_surat != 0");
 $jumlah_data = mysqli_num_rows($data);
 $total_halaman = ceil($jumlah_data / $batas);
 $halaman_2akhir = $total_halaman - 1;
 $adjacents = "2";
 
-$data_produk = mysqli_query($conn,"SELECT * FROM surat limit $halaman_awal, $batas");
-				$nomor = $halaman_awal+1;
+$data_produk = mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.kode_surat != 0 AND surat.username = pegawai.username limit $halaman_awal, $batas");
        ?> 
             <div class="row">
                   <table class="table table-dark text-white text-center table-striped table-responsive-sm">
                     <tr>
-                        <th>Kode Jenis</th><th>Kode Surat</th><th>Dokumen</th>
+                        <th>Kode Jenis</th><th>Kode Surat</th><th>Nama Surat</th>
                         <th>Tanggal</th><th>Pegawai</th><th colspan="2">Aksi</th>
                     </tr> 
                     <?php
@@ -51,15 +52,9 @@ $data_produk = mysqli_query($conn,"SELECT * FROM surat limit $halaman_awal, $bat
                     <tr>
                         <td><?php echo $d["kode_jenis"] ?></td>
                         <td><?php echo $d["kode_surat"] ?></td>
-                        <td><?php echo $d["nama_surat"] ?></td>
+                        <td><a href="../upload/<?php echo $d["dokumen"] ?>"><?= $d["nama_surat"] ?></a></td>
                         <td><?php echo $d["tgl_buat"] ?></td>
                         <td><?php echo $d["nama_pegawai"] ?></td>
-                        <td>
-                        <div>
-                                <a class="TblTampil btn btn-warning shadow-none" href="" name="TblTampil" data-toggle="modal" data-id="modal" data-target="#tampil_modal">TAMPILKAN
-                                </a>
-                            </div>
-                        </td>
                         <td>
                             <div>
                                 <a class="TblEdit" href="" name="TblEdit" data-toggle="modal" data-id="modal" data-target="#edit_modal"><i class="far fa-edit"></i>
@@ -198,55 +193,6 @@ $data_produk = mysqli_query($conn,"SELECT * FROM surat limit $halaman_awal, $bat
           </section>
         </div>
 <?php require_once('./footer.php') ?>
-<!-- Modal TAMPIL-->
-<div class="modal fade" id="tampil_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Tampilkan Menu</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form method="post" name="frm" class="needs-validation" action="menu-tampil.php">
-        <div class="row">
-            <div class="form-group col-md-8 col-12">
-            <tr>
-                <td>Stok untuk hari ini</td>
-                <td><input type="number" class="form-control" id="stt" name="stt" maxlength="15" required></td>
-            </tr>
-            <tr>
-                <td><input type="hidden" class="form-control" id="iddd" name="ed" maxlength="15"></td>
-            </tr>
-            </div>
-        </div>            
-    </div>
-          <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button class="btn btn-warning" name="TblShow">Submit</button>
-      </div>
-    </div>
-  </div>
-          </form>
-</div>
-
-<script>
-  $(document).ready(function(){
-    $('.TblTampil').on('click', function(){
-      $('#tampil_modal').modal('show');
-
-      $tr = $(this).closest('tr');
-
-      var data = $tr.children("td").map(function(){
-        return $(this).text();
-      }).get();
-      
-      $('#iddd').val(data[0]);
-    })
-  })
-</script>
-
 <!-- Modal DELETE-->
 <div class="modal fade" id="delete_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
@@ -384,48 +330,6 @@ $data_produk = mysqli_query($conn,"SELECT * FROM surat limit $halaman_awal, $bat
     })
   })
 </script>
-<!-- Modal TAMBAH-->
-<div class="modal fade" id="tambah_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Tambah Menu</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form method="post" name="frm" class="needs-validation" action="menu-tambah.php" enctype="multipart/form-data">
-            <div class="row">
-              <div class="form-group col-md-6 col-12">
-                <tr>
-                  <td>Nama Minuman</td>
-                  <td><input type="text" class="form-control" name="nama_minuman" maxlength="50" required=""></td>
-                </tr>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6 col-12">
-                <tr>
-                  <td>Harga</td>
-                  <td><input type="text" class="form-control" name="harga_minuman" maxlength="10" required=""></td>
-                </tr>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6 col-12">
-                <tr>
-                  <td>Gambar</td>
-                  <td><input class="form-control" type="file" id="formFile" name="gambar" required></td>
-                </tr>
-              </div>
-            </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-        <button class="btn btn-warning" name="TblSimpan">Simpan</button>
-      </div>
-    </div>
-  </div>
 </form>
 </div>
   </body>
