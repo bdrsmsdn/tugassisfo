@@ -10,6 +10,7 @@ $_SESSION["username"]=$_SESSION["username"];
 $_SESSION["nama_pegawai"]=$_SESSION["nama_pegawai"];
 
 $nk = $_SESSION["nama_pegawai"];
+$np = $_SESSION["username"];
 
 ?>
 <?php include_once("../functions.php");?>

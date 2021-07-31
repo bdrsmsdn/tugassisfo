@@ -1,6 +1,4 @@
-<?php 
-require_once('./header.php') ;
-?>
+<?php require_once('./header.php') ?>
         <!-- Main Content -->
         <div class="main-content">
           <section class="section">
@@ -24,21 +22,22 @@ require_once('./header.php') ;
               </div>
             </div>
             <?php
+if(isset($_POST["TblCari"])){
 $db=dbConnect();
 $batas = 10;
 $halaman = isset($_GET['halaman'])?(int)$_GET['halaman'] : 1;
 $halaman_awal = ($halaman>1) ? ($halaman * $batas) - $batas : 0;	
-
+$dicari=$db->escape_string($_POST["cari"]);
   $previous = $halaman - 1;
   $next = $halaman + 1;
   
-	$data=mysqli_query($conn,"SELECT * FROM surat WHERE kode_surat != 0");
+	$data=mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.username = pegawai.username");
 $jumlah_data = mysqli_num_rows($data);
 $total_halaman = ceil($jumlah_data / $batas);
 $halaman_2akhir = $total_halaman - 1;
 $adjacents = "2";
 
-$data_produk = mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.kode_surat != 0 AND surat.username = pegawai.username limit $halaman_awal, $batas");
+$data_produk = mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.username = pegawai.username AND surat.kode_surat != 0 AND (kode_jenis like '%$dicari%' or kode_surat like '%$dicari%' or nama_surat like '%$dicari%' or nama_pegawai like '%$dicari%') limit $halaman_awal, $batas");
        ?> 
             <div class="row">
                   <table class="table table-dark text-white text-center table-striped table-responsive-sm">
@@ -71,7 +70,25 @@ $data_produk = mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.kode
                     <?php
 		}
 		?>
-    </table>
+		</table>
+    <?php
+  } else {
+  ?>
+            <div class="row justify-content-center">
+                    <div class="empty-state" data-height="400">
+                      <div class="empty-state-icon">
+                        <i class="fas fa-question"></i>
+                      </div>
+                      <h2>Data tidak ditemukan</h2>
+                      <p class="lead">
+                        Kita tidak bisa menemukan data yang kamu cari, coba kata kunci lain.
+                      </p>
+                      <a href="javascript:history.back()" class="btn btn-primary mt-4">Kembali</a>
+                    </div>
+            </div>
+  <?php
+  }
+  ?>
                   </div>
                   <nav aria-label="Search results">
 			<ul class="pagination justify-content-center">
@@ -204,36 +221,36 @@ $data_produk = mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.kode
         </button>
       </div>
       <div class="modal-body">
-        <form method="post" name="frm" class="needs-validation" action="data-hapus.php">
+        <form method="post" name="frm" class="needs-validation" action="menu-hapus.php">
         <div class="row">
               <div class="form-group col-md-6 col-12">
                 <tr>
-                  <td>Jenis Surat</td>
-                  <td><input type="text" class="form-control" id="jenis_surat" name="jenis_surat" maxlength="15" readonly></td>
+                  <td>Id Minuman</td>
+                  <td><input type="text" class="form-control" id="id_minumanqq" name="id_minuman" maxlength="15" readonly></td>
                 </tr>
               </div>
             </div>
             <div class="row">
               <div class="form-group col-md-6 col-12">
                 <tr>
-                  <td>Kode Surat</td>
-                  <td><input type="text" class="form-control" name="kode_surat" id="kode_surat" maxlength="50" readonly></td>
+                  <td>Nama</td>
+                  <td><input type="text" class="form-control" name="nama_barang" id="namaq" maxlength="50" readonly></td>
                 </tr>
               </div>
             </div>
             <div class="row">
               <div class="form-group col-md-6 col-12">
                 <tr>
-                  <td>Nama Surat</td>
-                  <td><input type="text" class="form-control" id="nama_surat" name="nama_surat" maxlength="10" readonly></td>
+                  <td>Stok Tersedia</td>
+                  <td><input type="text" class="form-control" name="stok" id="stokq" maxlength="6" readonly></td>
                 </tr>
               </div>
             </div>
             <div class="row">
               <div class="form-group col-md-6 col-12">
                 <tr>
-                  <td>Tanggal Buat</td>
-                  <td><input type="date" class="form-control" name="tanggal" id="tanggal" maxlength="50" readonly></td>
+                  <td>Harga</td>
+                  <td><input type="text" class="form-control" id="hargaq" name="harga" maxlength="10" readonly></td>
                 </tr>
               </div>
             </div>
@@ -258,10 +275,10 @@ $data_produk = mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.kode
         return $(this).text();
       }).get();
       
-      $('#jenis_surat').val(data[0]);
-      $('#kode_surat').val(data[1]);
-      $('#nama_surat').val(data[2]);
-      $('#tanggal').val(data[3]);
+      $('#id_minumanqq').val(data[0]);
+      $('#namaq').val(data[1]);
+      $('#stokq').val(data[2]);
+      $('#hargaq').val(data[3]);
     })
   })
 </script>
@@ -277,44 +294,28 @@ $data_produk = mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.kode
         </button>
       </div>
       <div class="modal-body">
-        <form method="post" name="frm" class="needs-validation" action="surat-update.php" enctype="multipart/form-data">
-            <div class="row">
+        <form method="post" name="frm" class="needs-validation" action="menu-update.php">
+        <div class="row">
               <div class="form-group col-md-6 col-12">
                 <tr>
-                  <td>Jenis Surat</td>
-                  <td><input type="text" class="form-control" id="jenis_surat1" name="jenis_surat" maxlength="15" readonly></td>
+                  <td>Id Minuman</td>
+                  <td><input type="text" class="form-control" id="id_minuman" name="id_minuman" maxlength="15" readonly></td>
                 </tr>
               </div>
             </div>
             <div class="row">
               <div class="form-group col-md-6 col-12">
                 <tr>
-                  <td>Kode Surat</td>
-                  <td><input type="text" class="form-control" name="kode_surat" id="kode_surat1" maxlength="50" readonly></td>
+                  <td>Nama</td>
+                  <td><input type="text" class="form-control" name="nama_minuman" id="nama" maxlength="50" required=""></td>
                 </tr>
               </div>
             </div>
             <div class="row">
               <div class="form-group col-md-6 col-12">
                 <tr>
-                  <td>Nama Surat</td>
-                  <td><input type="text" class="form-control" id="nama_surat1" name="nama_surat" maxlength="10"></td>
-                </tr>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6 col-12">
-                <tr>
-                  <td>Tanggal Buat</td>
-                  <td><input type="date" class="form-control" name="tanggal" id="tanggal1" maxlength="50"></td>
-                </tr>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6 col-12">
-                <tr>
-                  <td>Dokumen</td>
-                  <td><input type="file" class="form-control" name="file" id="file" accept=".docx, application/msword, application/pdf"></td>
+                  <td>Harga</td>
+                  <td><input type="text" class="form-control" id="harga" name="harga_minuman" maxlength="10" required=""></td>
                 </tr>
               </div>
             </div>
@@ -339,10 +340,10 @@ $data_produk = mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.kode
         return $(this).text();
       }).get();
       
-      $('#jenis_surat1').val(data[0]);
-      $('#kode_surat1').val(data[1]);
-      $('#nama_surat1').val(data[2]);
-      $('#tanggal1').val(data[3]);
+      $('#id_minuman').val(data[0]);
+      $('#nama').val(data[1]);
+      $('#stok').val(data[2]);
+      $('#harga').val(data[3]);
     })
   })
 </script>
