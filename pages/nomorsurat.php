@@ -79,7 +79,7 @@
                   <div class="form-group row">
                     <label for="nama" class="col-sm-3 col-form-label">Nama File</label>
                     <div class="col-sm-9">
-                        <input type="text" required class="form-control" name="nama" id="nama" placeholder="Masukkan nama file">
+                        <input type="text" class="form-control" name="nama" id="nama" placeholder="Masukkan nama file">
                     </div>
                     </div>  
                   <div class="form-group row">
@@ -113,7 +113,7 @@
                     <div class="form-group row">
                     <label class="col-sm-3 col-form-label">Upload Surat</label>
                     <div class="col-sm-9">
-                        <input name="file" type="file" />
+                        <input name="file" type="file" accept=".docx, application/msword, application/pdf"/>
                     </div>                                                          
                     </div>                    
                     <div class="modal-footer justify-content-center">
@@ -126,7 +126,7 @@
             $date = $_POST['date'];
             $dq = getRomawi($ddd);
             $sql1 = "INSERT INTO surat(kode_surat) SELECT MAX(kode_surat)+1 FROM surat WHERE kode_jenis = '$jenis'";
-            $sql2 = "UPDATE surat SET tgl_buat = '$date', kode_jenis = '$jenis' WHERE kode_surat = (SELECT MAX(kode_surat) FROM surat WHERE kode_jenis IS NULL) AND kode_jenis IS NULL";
+            $sql2 = "UPDATE surat SET tgl_buat = '$date', kode_jenis = '$jenis', username='$np' WHERE kode_surat = (SELECT MAX(kode_surat) FROM surat WHERE kode_jenis IS NULL) AND kode_jenis IS NULL";
             $sql3 = "SELECT kode_surat FROM surat WHERE kode_jenis = '$jenis' AND kode_surat = (SELECT MAX(kode_surat) FROM surat WHERE kode_jenis = '$jenis')";
             $res1=$db->query($sql1);
             $res2=$db->query($sql2);
