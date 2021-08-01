@@ -14,7 +14,12 @@ if($db->connect_errno==0){
 					session_start();
 					$_SESSION["username"]=$data["username"];
 					$_SESSION["nama_pegawai"]=$data["nama_pegawai"];
-					header("Location:/home");
+					
+					if ($_SESSION["username"]=$data["username"]=="KS01") {
+					    header("Location:./pages/index-ks.php");
+					} else {
+					    header("Location:/pages/index.php");
+					}					
 				} else {
 					header("Location: index.php?error=1");
 				}
