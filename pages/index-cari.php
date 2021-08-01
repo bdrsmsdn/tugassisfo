@@ -31,14 +31,13 @@ $dicari=$db->escape_string($_POST["cari"]);
   $previous = $halaman - 1;
   $next = $halaman + 1;
   
-	$data=mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.username = pegawai.username");
-// 	$data=mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.username = pegawai.username AND surat.kode_surat != 0");
+	$data=mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.username = pegawai.username AND surat.kode_surat != 0");
 $jumlah_data = mysqli_num_rows($data);
 $total_halaman = ceil($jumlah_data / $batas);
 $halaman_2akhir = $total_halaman - 1;
 $adjacents = "2";
 
-$data_produk = mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.username = pegawai.username AND surat.kode_surat != 0 AND (kode_jenis like '%$dicari%' or kode_surat like '%$dicari%' or nama_surat like '%$dicari%' or nama_pegawai like '%$dicari%') limit $halaman_awal, $batas");
+$data_produk = mysqli_query($conn,"SELECT * FROM surat, pegawai WHERE surat.username = pegawai.username AND surat.kode_surat != 0 AND kode_jenis like '%$dicari%' or kode_surat like '%$dicari%' or nama_surat like '%$dicari%' or nama_pegawai like '%$dicari%' limit $halaman_awal, $batas");
        ?> 
             <div class="row">
                   <table class="table table-dark text-white text-center table-striped table-responsive-sm">
