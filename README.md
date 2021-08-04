@@ -28,5 +28,10 @@ Jangan lupa follow instagramku yaa! https://instagram.com/bdrsmsdn
 <li>Allah SWT<br>
 <li>Ibu Rani Susanto, S.Kom., M.Kom.<br>
 <li>https://github.com/ferdibayufebryan11<br>
-<li>Apid Haryana<br>
+<li>https://github.com/BANZAITESLA<br>
+<li>Daffa Adistya Fauzan<br>
+<li>Nuraeni Eka<br>
+<li>Kartika<br>
+<li>Syifa<br>
+<li>Nadya<br>
 </li>
